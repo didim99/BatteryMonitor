@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="colorPrimary">#3F51B5</color>
+  <color name="colorPrimaryDark">#303F9F</color>
+  <color name="colorAccent">#6aa4f5</color>
+  <color name="widgetTextNormal">#ffffff</color>
+  <color name="widgetTextShadow">#A0000000</color>
+  <color name="widgetTextCharging">#ACE499</color>
+  <color name="widgetTextLow">#E5A2A2</color>
+  <color name="widgetBackground">#40ffffff</color>
+  <color name="batteryZero">#800000</color>
+  <color name="batteryHalf">#808000</color>
+  <color name="batteryFull">#135400</color>
+</resources>
