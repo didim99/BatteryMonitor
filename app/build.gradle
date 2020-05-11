@@ -1,0 +1,48 @@
+apply plugin: 'com.android.application'
+
+android {
+  compileSdkVersion 28
+  compileOptions {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+  }
+  defaultConfig {
+    applicationId "ru.didim99.batterymonitor"
+    minSdkVersion 21
+    targetSdkVersion 28
+    versionCode 3
+    versionName '1.0.2'
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+  }
+  signingConfigs {
+    defaultSign {
+      storeFile file(keyStorePath)
+      storePassword keyStorePassword
+      keyAlias projectKeyAlias
+      keyPassword projectKeyPassword
+    }
+  }
+  buildTypes {
+    debug {
+      signingConfig signingConfigs.defaultSign
+    }
+    release {
+      minifyEnabled true
+      shrinkResources true
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+      signingConfig signingConfigs.defaultSign
+    }
+  }
+  lintOptions {
+    checkReleaseBuilds false
+    abortOnError true
+  }
+}
+
+dependencies {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  implementation 'com.android.support:appcompat-v7:28.0.0'
+  testImplementation 'junit:junit:4.13'
+  androidTestImplementation 'com.android.support.test:runner:1.0.2'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
