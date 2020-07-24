@@ -14,9 +14,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.os.BatteryManager;
 import android.widget.RemoteViews;
 import ru.didim99.batterymonitor.R;
+import ru.didim99.batterymonitor.utils.BatteryState;
 import ru.didim99.batterymonitor.utils.ColorScale;
 
 /**
@@ -25,11 +25,9 @@ import ru.didim99.batterymonitor.utils.ColorScale;
 public class WidgetProvider extends AppWidgetProvider {
   private static final String FONT_PATH = "fonts/LCDNova.ttf";
   private static final int UPDATE_PERIOD = 60000;
-  private static final int BATTERY_LOW_LEVEL = 15;
   private static final double BATTERY_ZERO_LEVEL = 0.0;
   private static final double BATTERY_HALF_LEVEL = 0.5;
   private static final double BATTERY_FULL_LEVEL = 1.0;
-  private static final int DEFAULT_VALUE = -1;
   private static final int CANVAS_WIDTH = 400;
   private static final int CANVAS_HEIGHT = 800;
   private static final int FONT_SIZE_MAIN = 150;
@@ -52,10 +50,7 @@ public class WidgetProvider extends AppWidgetProvider {
       AppWidgetManager manager = AppWidgetManager.getInstance(context);
       int[] ids = manager.getAppWidgetIds(
         new ComponentName(context, WidgetProvider.class));
-      Intent updateIntent = new Intent();
-      updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-      updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-      context.sendBroadcast(updateIntent);
+      context.sendBroadcast(getUpdateIntent(ids));
     }
   }
 
@@ -65,41 +60,54 @@ public class WidgetProvider extends AppWidgetProvider {
     Intent battery = context.registerReceiver(null, filter);
     if (battery == null) return;
 
-    int status = battery.getIntExtra(BatteryManager.EXTRA_STATUS, DEFAULT_VALUE);
-    int level = battery.getIntExtra(BatteryManager.EXTRA_LEVEL, DEFAULT_VALUE);
-    int scale = battery.getIntExtra(BatteryManager.EXTRA_SCALE, DEFAULT_VALUE);
-    boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
-      status == BatteryManager.BATTERY_STATUS_FULL;
-    int percent = Math.round(level / (float) scale * 100f);
-    boolean isLow = percent <= BATTERY_LOW_LEVEL;
+    BatteryState state = new BatteryState(battery);
+    Bitmap bitmap = drawWidget(context, state);
+    RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+    views.setImageViewBitmap(R.id.ivBackground, bitmap);
+    manager.updateAppWidget(appWidgetIds, views);
+    setupSelfUpdate(context, appWidgetIds);
+  }
 
-    int textColor;
+  private Intent getUpdateIntent(int[] ids) {
+    Intent intent = new Intent();
+    intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+    return intent;
+  }
+
+  private void setupSelfUpdate(Context context, int[] ids) {
+    Intent updateIntent = getUpdateIntent(ids);
+    AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    am.set(AlarmManager.RTC, System.currentTimeMillis() + UPDATE_PERIOD,
+      PendingIntent.getBroadcast(context, 0, updateIntent, 0));
+  }
+
+  private Bitmap drawWidget(Context context, BatteryState state) {
+    Bitmap bitmap = Bitmap.createBitmap(CANVAS_WIDTH, CANVAS_HEIGHT, Bitmap.Config.ARGB_8888);
     Resources res = context.getResources();
-    if (isCharging) textColor = res.getColor(R.color.widgetTextCharging);
-    else if (isLow) textColor = res.getColor(R.color.widgetTextLow);
-    else textColor = res.getColor(R.color.widgetTextNormal);
-    int textShadowColor = res.getColor(R.color.widgetTextShadow);
+    Canvas canvas = new Canvas(bitmap);
+    Paint paint = getPaint(context);
+
+    drawBackground(res, canvas, paint, state.getPercent());
+    drawText(res, canvas, paint, state);
+    return bitmap;
+  }
+
+  private Paint getPaint(Context context) {
+    Typeface tf = Typeface.createFromAsset(context.getAssets(), FONT_PATH);
+    Paint paint = new Paint();
+    paint.setSubpixelText(true);
+    paint.setAntiAlias(true);
+    paint.setTypeface(tf);
+    return paint;
+  }
+
+  private void drawBackground(Resources res, Canvas canvas, Paint paint, int percent) {
     int bgColor = res.getColor(R.color.widgetBackground);
     ColorScale colorScale = new ColorScale(
       new ColorScale.Point(BATTERY_ZERO_LEVEL, res.getColor(R.color.batteryZero)),
       new ColorScale.Point(BATTERY_HALF_LEVEL, res.getColor(R.color.batteryHalf)),
       new ColorScale.Point(BATTERY_FULL_LEVEL, res.getColor(R.color.batteryFull)));
-    String percentSign = res.getString(R.string.percentSign);
-    String percentStr = String.valueOf(percent);
-
-    Typeface tf = Typeface.createFromAsset(context.getAssets(), FONT_PATH);
-    Bitmap bitmap = Bitmap.createBitmap(CANVAS_WIDTH, CANVAS_HEIGHT, Bitmap.Config.ARGB_8888);
-    Canvas canvas = new Canvas(bitmap);
-    Paint paint = new Paint();
-    paint.setTypeface(tf);
-    paint.setSubpixelText(true);
-    paint.setAntiAlias(true);
-
-    int numWidth = FONT_SIZE_MAIN / 2 * percentStr.length();
-    int textWidth = numWidth + SIGN_MARGIN + FONT_SIZE_SIGN;
-    int numPosX = (CANVAS_WIDTH - textWidth) / 2;
-    int signPosX = numPosX + numWidth + SIGN_MARGIN;
-    int textPosY = (CANVAS_HEIGHT + FONT_SIZE_MAIN) / 2;
 
     RectF rectPin = new RectF(
       (CANVAS_WIDTH - BATT_PIN_WIDTH) / 2f, 0,
@@ -127,6 +135,22 @@ public class WidgetProvider extends AppWidgetProvider {
       canvas.drawRect(rectPin, paint);
     canvas.drawRoundRect(rectBody,
       BATT_CORNER_RADIUS, BATT_CORNER_RADIUS, paint);
+  }
+
+  private void drawText(Resources res, Canvas canvas, Paint paint, BatteryState state) {
+    int textColor;
+    if (state.isCharging()) textColor = res.getColor(R.color.widgetTextCharging);
+    else if (state.isLow()) textColor = res.getColor(R.color.widgetTextLow);
+    else textColor = res.getColor(R.color.widgetTextNormal);
+    int textShadowColor = res.getColor(R.color.widgetTextShadow);
+    String percentSign = res.getString(R.string.percentSign);
+    String percentStr = String.valueOf(state.getPercent());
+
+    int numWidth = FONT_SIZE_MAIN / 2 * percentStr.length();
+    int textWidth = numWidth + SIGN_MARGIN + FONT_SIZE_SIGN;
+    int numPosX = (CANVAS_WIDTH - textWidth) / 2;
+    int signPosX = numPosX + numWidth + SIGN_MARGIN;
+    int textPosY = (CANVAS_HEIGHT + FONT_SIZE_MAIN) / 2;
 
     paint.setTextSize(FONT_SIZE_MAIN);
     paint.setColor(textShadowColor);
@@ -140,16 +164,5 @@ public class WidgetProvider extends AppWidgetProvider {
       textPosY + TEXT_SHADOW_OFFSET, paint);
     paint.setColor(textColor);
     canvas.drawText(percentSign, signPosX, textPosY, paint);
-
-    RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-    views.setImageViewBitmap(R.id.ivBackground, bitmap);
-    manager.updateAppWidget(appWidgetIds, views);
-
-    Intent updateIntent = new Intent();
-    updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-    updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-    AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-    am.set(AlarmManager.RTC, System.currentTimeMillis() + UPDATE_PERIOD,
-      PendingIntent.getBroadcast(context, 0, updateIntent, 0));
   }
 }
