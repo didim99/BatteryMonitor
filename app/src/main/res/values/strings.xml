@@ -1,6 +1,11 @@
 <resources>
   <string name="app_name">Battery Monitor</string>
-  <string name="percentSign">%</string>
   <string name="btnOk">OK</string>
   <string name="welcome">Это приложение существует ради виджета. Добавтьте его на главный экран и наслаждайтесь. Тут делать нечего.</string>
+  <!-- Widget content -->
+  <string name="percentSign">%</string>
+  <string name="time_seconds">%ds</string>
+  <string name="time_minutes">%dm %ds</string>
+  <string name="time_hours">%dh %dm</string>
+  <string name="time_days">%dd %dh</string>
 </resources>

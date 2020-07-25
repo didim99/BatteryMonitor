@@ -7,7 +7,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -31,6 +30,7 @@ public class WidgetProvider extends AppWidgetProvider {
   private static final int CANVAS_WIDTH = 400;
   private static final int CANVAS_HEIGHT = 800;
   private static final int FONT_SIZE_MAIN = 150;
+  private static final int FONT_SIZE_TIME = 85;
   private static final int BATT_PIN_PART = 8;
   private static final int TEXT_SHADOW_OFFSET = 8;
   private static final int FONT_SIZE_SIGN = FONT_SIZE_MAIN / 2;
@@ -56,11 +56,9 @@ public class WidgetProvider extends AppWidgetProvider {
 
   @Override
   public void onUpdate(Context context, AppWidgetManager manager, int[] appWidgetIds) {
-    IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-    Intent battery = context.registerReceiver(null, filter);
-    if (battery == null) return;
+    BatteryState state = BatteryState.load(context);
+    if (state == null) return;
 
-    BatteryState state = new BatteryState(battery);
     Bitmap bitmap = drawWidget(context, state);
     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
     views.setImageViewBitmap(R.id.ivBackground, bitmap);
@@ -83,7 +81,8 @@ public class WidgetProvider extends AppWidgetProvider {
   }
 
   private Bitmap drawWidget(Context context, BatteryState state) {
-    Bitmap bitmap = Bitmap.createBitmap(CANVAS_WIDTH, CANVAS_HEIGHT, Bitmap.Config.ARGB_8888);
+    Bitmap bitmap = Bitmap.createBitmap(CANVAS_WIDTH,
+      CANVAS_HEIGHT, Bitmap.Config.ARGB_8888);
     Resources res = context.getResources();
     Canvas canvas = new Canvas(bitmap);
     Paint paint = getPaint(context);
@@ -145,12 +144,18 @@ public class WidgetProvider extends AppWidgetProvider {
     int textShadowColor = res.getColor(R.color.widgetTextShadow);
     String percentSign = res.getString(R.string.percentSign);
     String percentStr = String.valueOf(state.getPercent());
+    String timeStr = getTimeString(res, state.getLifeTime());
 
+    // Percent string position
     int numWidth = FONT_SIZE_MAIN / 2 * percentStr.length();
     int textWidth = numWidth + SIGN_MARGIN + FONT_SIZE_SIGN;
     int numPosX = (CANVAS_WIDTH - textWidth) / 2;
     int signPosX = numPosX + numWidth + SIGN_MARGIN;
-    int textPosY = (CANVAS_HEIGHT + FONT_SIZE_MAIN) / 2;
+    int textPosY = CANVAS_HEIGHT - (FONT_SIZE_MAIN + SIGN_MARGIN);
+    // Time string position
+    int timeWidth = FONT_SIZE_TIME / 2 * timeStr.length();
+    int timePosX = (CANVAS_WIDTH - timeWidth) / 2;
+    int timePosY = textPosY + FONT_SIZE_TIME + SIGN_MARGIN * 2;
 
     paint.setTextSize(FONT_SIZE_MAIN);
     paint.setColor(textShadowColor);
@@ -164,5 +169,21 @@ public class WidgetProvider extends AppWidgetProvider {
       textPosY + TEXT_SHADOW_OFFSET, paint);
     paint.setColor(textColor);
     canvas.drawText(percentSign, signPosX, textPosY, paint);
+    paint.setTextSize(FONT_SIZE_TIME);
+    paint.setColor(textShadowColor);
+    canvas.drawText(timeStr, timePosX + TEXT_SHADOW_OFFSET,
+      timePosY + TEXT_SHADOW_OFFSET, paint);
+    paint.setColor(textColor);
+    canvas.drawText(timeStr, timePosX, timePosY, paint);
+  }
+
+  private String getTimeString(Resources res, long time) {
+    if (time < 60) return res.getString(R.string.time_seconds, time);
+    long seconds = time % 60; time /= 60;
+    if (time < 60) return res.getString(R.string.time_minutes, time, seconds);
+    long minutes = time % 60; time /= 60;
+    if (time < 24) return res.getString(R.string.time_hours, time, minutes);
+    long hours = time % 24; time /= 24;
+    return res.getString(R.string.time_days, time, hours);
   }
 }

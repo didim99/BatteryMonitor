@@ -64,7 +64,7 @@ public class ColorScale {
   /* ======== MATH UTILS ======== */
 
   private static double bound(double v, double min, double max) {
-    return v < min ? min : (v > max ? max : v);
+    return Math.min(Math.max(v, min), max);
   }
 
   private static double norm(double v, double min, double max) {
