@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="welcome">Это приложение существует ради виджета. Добавтьте его на главный экран и наслаждайтесь. Тут делать нечего.</string>
+  <!-- Widget content -->
+  <string name="time_seconds">%dс</string>
+  <string name="time_minutes">%dм %dс</string>
+  <string name="time_hours">%dч %dм</string>
+  <string name="time_days">%dд %dч</string>
+</resources>

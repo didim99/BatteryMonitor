@@ -14,14 +14,17 @@ import android.preference.PreferenceManager;
 
 public class BatteryState {
   private static final int EXTRA_DEFAULT = -1;
-  private static final int BATTERY_LOW_LEVEL = 15;
+  private static final int BATTERY_LEVEL_LOW = 15;
+  private static final int BATTERY_LEVEL_FULL = 100;
+  private static final String KEY_LAST_PERCENT = "battery.lastPercent";
   private static final String KEY_LAST_STATE = "battery.lastState";
   private static final String KEY_LAST_TIME = "battery.lastTime";
+  private static final int DEFAULT_LAST_PERCENT = -1;
   private static final boolean DEFAULT_LAST_STATE = false;
   private static final long DEFAULT_LAST_TIME = 0;
 
-  private int percent;
   private boolean isCharging, isLow;
+  private int percent, lastPercent;
   private boolean prevState;
   private long lastTime;
 
@@ -30,19 +33,21 @@ public class BatteryState {
     isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
       status == BatteryManager.BATTERY_STATUS_FULL;
     percent = getPercent(batteryIntent);
-    isLow = percent <= BATTERY_LOW_LEVEL;
+    isLow = percent <= BATTERY_LEVEL_LOW;
+
     loadFromSettings(context);
-    checkLastState(context);
+    if (needUpdatePercent()) updatePercent(context);
+    if (needUpdateTime()) updateTime(context);
   }
 
   private void loadFromSettings(Context context) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    lastPercent = settings.getInt(KEY_LAST_PERCENT, DEFAULT_LAST_PERCENT);
     prevState = settings.getBoolean(KEY_LAST_STATE, DEFAULT_LAST_STATE);
     lastTime = settings.getLong(KEY_LAST_TIME, DEFAULT_LAST_TIME);
-    if (lastTime == DEFAULT_LAST_TIME) updateSettings(context);
   }
 
-  private void updateSettings(Context context) {
+  private void updateTime(Context context) {
     lastTime = System.currentTimeMillis();
     prevState = isCharging;
 
@@ -51,8 +56,26 @@ public class BatteryState {
       .putLong(KEY_LAST_TIME, lastTime).apply();
   }
 
-  private void checkLastState(Context context) {
-    if (prevState != isCharging) updateSettings(context);
+  private void updatePercent(Context context) {
+    lastPercent = percent;
+
+    PreferenceManager.getDefaultSharedPreferences(context).edit()
+      .putInt(KEY_LAST_PERCENT, lastPercent).apply();
+  }
+
+  private boolean needUpdatePercent() {
+    return lastPercent == DEFAULT_LAST_PERCENT
+      || lastPercent != percent;
+  }
+
+  private boolean needUpdateTime() {
+    if (lastTime == DEFAULT_LAST_TIME)
+      return true;
+    if (isCharging && lastPercent == BATTERY_LEVEL_FULL)
+      return false;
+    return prevState != isCharging
+      || isCharging && lastPercent > percent
+      || !isCharging && lastPercent < percent;
   }
 
   private int getPercent(Intent battery) {

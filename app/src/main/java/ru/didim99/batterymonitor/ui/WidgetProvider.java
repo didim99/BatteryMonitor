@@ -153,10 +153,10 @@ public class WidgetProvider extends AppWidgetProvider {
     int signPosX = numPosX + numWidth + SIGN_MARGIN;
     int textPosY = CANVAS_HEIGHT - (FONT_SIZE_MAIN + SIGN_MARGIN);
     // Time string position
-    int timeWidth = FONT_SIZE_TIME / 2 * timeStr.length();
-    int timePosX = (CANVAS_WIDTH - timeWidth) / 2;
+    int timePosX = CANVAS_WIDTH / 2;
     int timePosY = textPosY + FONT_SIZE_TIME + SIGN_MARGIN * 2;
 
+    // Percent string
     paint.setTextSize(FONT_SIZE_MAIN);
     paint.setColor(textShadowColor);
     canvas.drawText(percentStr, numPosX + TEXT_SHADOW_OFFSET,
@@ -169,6 +169,8 @@ public class WidgetProvider extends AppWidgetProvider {
       textPosY + TEXT_SHADOW_OFFSET, paint);
     paint.setColor(textColor);
     canvas.drawText(percentSign, signPosX, textPosY, paint);
+    // Time string
+    paint.setTextAlign(Paint.Align.CENTER);
     paint.setTextSize(FONT_SIZE_TIME);
     paint.setColor(textShadowColor);
     canvas.drawText(timeStr, timePosX + TEXT_SHADOW_OFFSET,

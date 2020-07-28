@@ -1,9 +1,9 @@
 <resources>
-  <string name="app_name">Battery Monitor</string>
-  <string name="btnOk">OK</string>
-  <string name="welcome">Это приложение существует ради виджета. Добавтьте его на главный экран и наслаждайтесь. Тут делать нечего.</string>
+  <string name="app_name" translatable="false">Battery Monitor</string>
+  <string name="btnOk" translatable="false">OK</string>
+  <string name="welcome">This app exists only for a widget. Add it to your home screen and enjoy. There is nothing to do here.</string>
   <!-- Widget content -->
-  <string name="percentSign">%</string>
+  <string name="percentSign" translatable="false">%</string>
   <string name="time_seconds">%ds</string>
   <string name="time_minutes">%dm %ds</string>
   <string name="time_hours">%dh %dm</string>
