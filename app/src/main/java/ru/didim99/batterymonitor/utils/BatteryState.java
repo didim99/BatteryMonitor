@@ -19,14 +19,16 @@ public class BatteryState {
   private static final String KEY_LAST_PERCENT = "battery.lastPercent";
   private static final String KEY_LAST_STATE = "battery.lastState";
   private static final String KEY_LAST_TIME = "battery.lastTime";
+  private static final String KEY_LAST_TIME_FULL = "battery.lastTime.full";
   private static final int DEFAULT_LAST_PERCENT = -1;
   private static final boolean DEFAULT_LAST_STATE = false;
   private static final long DEFAULT_LAST_TIME = 0;
+  private static final long DEFAULT_LAST_TIME_FULL = 0;
 
   private boolean isCharging, isLow;
   private int percent, lastPercent;
+  private long lastTime, lastTimeFull;
   private boolean prevState;
-  private long lastTime;
 
   private BatteryState(Context context, Intent batteryIntent) {
     int status = batteryIntent.getIntExtra(BatteryManager.EXTRA_STATUS, EXTRA_DEFAULT);
@@ -34,10 +36,7 @@ public class BatteryState {
       status == BatteryManager.BATTERY_STATUS_FULL;
     percent = getPercent(batteryIntent);
     isLow = percent <= BATTERY_LEVEL_LOW;
-
     loadFromSettings(context);
-    if (needUpdatePercent()) updatePercent(context);
-    if (needUpdateTime()) updateTime(context);
   }
 
   private void loadFromSettings(Context context) {
@@ -45,22 +44,36 @@ public class BatteryState {
     lastPercent = settings.getInt(KEY_LAST_PERCENT, DEFAULT_LAST_PERCENT);
     prevState = settings.getBoolean(KEY_LAST_STATE, DEFAULT_LAST_STATE);
     lastTime = settings.getLong(KEY_LAST_TIME, DEFAULT_LAST_TIME);
+    lastTimeFull = settings.getLong(KEY_LAST_TIME_FULL, DEFAULT_LAST_TIME_FULL);
+  }
+
+  public void update(Context context) {
+    if (isChargedNow()) updateTimeFull(context);
+    if (needUpdatePercent()) updatePercent(context);
+    if (needUpdateTime()) updateTime(context);
   }
 
   private void updateTime(Context context) {
     lastTime = System.currentTimeMillis();
-    prevState = isCharging;
-
     PreferenceManager.getDefaultSharedPreferences(context).edit()
-      .putBoolean(KEY_LAST_STATE, prevState)
+      .putBoolean(KEY_LAST_STATE, isCharging)
       .putLong(KEY_LAST_TIME, lastTime).apply();
   }
 
-  private void updatePercent(Context context) {
-    lastPercent = percent;
-
+  private void updateTimeFull(Context context) {
+    lastTimeFull = System.currentTimeMillis();
     PreferenceManager.getDefaultSharedPreferences(context).edit()
-      .putInt(KEY_LAST_PERCENT, lastPercent).apply();
+      .putLong(KEY_LAST_TIME_FULL, lastTimeFull).apply();
+  }
+
+  private void updatePercent(Context context) {
+    PreferenceManager.getDefaultSharedPreferences(context).edit()
+      .putInt(KEY_LAST_PERCENT, percent).apply();
+  }
+
+  private boolean isChargedNow() {
+    return isCharging && isFull()
+      && lastPercent < BATTERY_LEVEL_FULL;
   }
 
   private boolean needUpdatePercent() {
@@ -71,7 +84,7 @@ public class BatteryState {
   private boolean needUpdateTime() {
     if (lastTime == DEFAULT_LAST_TIME)
       return true;
-    if (isCharging && lastPercent == BATTERY_LEVEL_FULL)
+    if (isCharging && isFull())
       return false;
     return prevState != isCharging
       || isCharging && lastPercent > percent
@@ -88,6 +101,10 @@ public class BatteryState {
     return isCharging;
   }
 
+  private boolean isFull() {
+    return percent == BATTERY_LEVEL_FULL;
+  }
+
   public boolean isLow() {
     return isLow;
   }
@@ -97,7 +114,9 @@ public class BatteryState {
   }
 
   public long getLifeTime() {
-    return (System.currentTimeMillis() - lastTime) / 1000;
+    long now = (isCharging && isFull()) ?
+      lastTimeFull : System.currentTimeMillis();
+    return (now - lastTime) / 1000;
   }
 
   public static BatteryState load(Context context) {
