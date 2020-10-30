@@ -1,11 +1,20 @@
 <resources>
   <string name="app_name" translatable="false">Battery Monitor</string>
   <string name="btnOk" translatable="false">OK</string>
-  <string name="welcome">This app exists only for a widget. Add it to your home screen and enjoy. There is nothing to do here.</string>
-  <!-- Widget content -->
+  <!-- Battery level -->
   <string name="percentSign" translatable="false">%</string>
+  <string name="percentStr" translatable="false">%d%%</string>
+  <!-- Time intervals -->
   <string name="time_seconds">%ds</string>
   <string name="time_minutes">%dm %ds</string>
   <string name="time_hours">%dh %dm</string>
   <string name="time_days">%dd %dh</string>
+  <string name="time_detailed_minutes" translatable="false">%02d:%02d</string>
+  <string name="time_detailed_hours" translatable="false">%02d:%02d:%02d</string>
+  <string name="time_detailed_days">%dd %02d:%02d:%02d</string>
+  <!-- MainActivity -->
+  <string name="stat_batteryLevel">Battery level</string>
+  <string name="stat_chargeTime">Since charge start</string>
+  <string name="stat_lifeTime">Since last charge</string>
+  <string name="stat_uptime">Uptime</string>
 </resources>

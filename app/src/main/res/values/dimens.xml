@@ -2,4 +2,5 @@
 <resources>
   <dimen name="widget_padding">6dp</dimen>
   <dimen name="layoutPadding">20dp</dimen>
+  <dimen name="textSize_main">16sp</dimen>
 </resources>

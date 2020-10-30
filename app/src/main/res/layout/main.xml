@@ -5,22 +5,73 @@
   android:layout_height="wrap_content"
   android:orientation="vertical">
 
-  <TextView
-    android:id="@+id/textView"
+  <TableLayout
+    android:id="@+id/statView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/layoutPadding"
     android:layout_marginStart="@dimen/layoutPadding"
-    android:layout_marginEnd="@dimen/layoutPadding"
-    android:text="@string/welcome"
-    android:textSize="16sp"/>
+    android:layout_marginEnd="@dimen/layoutPadding">
+
+    <TableRow>
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stat_batteryLevel"
+        android:textSize="@dimen/textSize_main"
+        android:gravity="end"/>
+
+      <TextView
+        android:id="@+id/tvBatteryLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/textActive"
+        android:textSize="@dimen/textSize_main"/>
+    </TableRow>
+
+    <TableRow>
+      <TextView
+        android:id="@+id/tvLifetimeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stat_lifeTime"
+        android:textSize="@dimen/textSize_main"
+        android:gravity="end"/>
+
+      <TextView
+        android:id="@+id/tvLifetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/textActive"
+        android:textSize="@dimen/textSize_main"/>
+    </TableRow>
+
+    <TableRow>
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stat_uptime"
+        android:textSize="@dimen/textSize_main"
+        android:gravity="end"/>
+
+      <TextView
+        android:id="@+id/tvUptime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/textActive"
+        android:textSize="@dimen/textSize_main"/>
+    </TableRow>
+  </TableLayout>
 
   <Button
     android:id="@+id/btnOk"
     style="?android:buttonBarButtonStyle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_below="@id/textView"
+    android:layout_below="@id/statView"
     android:layout_alignParentEnd="true"
     android:text="@string/btnOk"/>
 

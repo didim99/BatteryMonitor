@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import ru.didim99.batterymonitor.R;
 import ru.didim99.batterymonitor.utils.BatteryState;
 import ru.didim99.batterymonitor.utils.ColorScale;
+import ru.didim99.batterymonitor.utils.TimeUtils;
 
 /**
  * Created by didim99 on 10.08.20.
@@ -95,7 +96,7 @@ class WidgetDrawer {
   private void drawText(BatteryState state) {
     String percentSign = res.getString(R.string.percentSign);
     String percentStr = String.valueOf(state.getPercent());
-    String timeStr = getTimeString(state.getLifeTime());
+    String timeStr = TimeUtils.getTimeString(res, state.getLifeTime());
 
     // Percent string
     int numWidth = FONT_SIZE_MAIN / 2 * percentStr.length();
@@ -139,15 +140,5 @@ class WidgetDrawer {
     else if (state.isLow()) textColor = res.getColor(R.color.widgetTextLow);
     else textColor = res.getColor(R.color.widgetTextNormal);
     textShadowColor = res.getColor(R.color.widgetTextShadow);
-  }
-
-  private String getTimeString(long time) {
-    if (time < 60) return res.getString(R.string.time_seconds, time);
-    long seconds = time % 60; time /= 60;
-    if (time < 60) return res.getString(R.string.time_minutes, time, seconds);
-    long minutes = time % 60; time /= 60;
-    if (time < 24) return res.getString(R.string.time_hours, time, minutes);
-    long hours = time % 24; time /= 24;
-    return res.getString(R.string.time_days, time, hours);
   }
 }

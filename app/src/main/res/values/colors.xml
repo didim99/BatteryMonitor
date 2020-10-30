@@ -11,4 +11,5 @@
   <color name="batteryZero">#800000</color>
   <color name="batteryHalf">#808000</color>
   <color name="batteryFull">#135400</color>
+  <color name="textActive">#ffffff</color>
 </resources>

@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="welcome">Это приложение существует ради виджета. Добавтьте его на главный экран и наслаждайтесь. Тут делать нечего.</string>
-  <!-- Widget content -->
+  <!-- Time intervals -->
   <string name="time_seconds">%dс</string>
   <string name="time_minutes">%dм %dс</string>
   <string name="time_hours">%dч %dм</string>
   <string name="time_days">%dд %dч</string>
+  <string name="time_detailed_days">%dдн %02d:%02d:%02d</string>
+  <!-- MainActivity -->
+  <string name="stat_batteryLevel">Уровень заряда</string>
+  <string name="stat_chargeTime">С начала зарядки</string>
+  <string name="stat_lifeTime">С последней зарядки</string>
+  <string name="stat_uptime">С момента загрузки</string>
 </resources>
