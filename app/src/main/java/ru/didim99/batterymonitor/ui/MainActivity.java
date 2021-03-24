@@ -2,9 +2,9 @@ package ru.didim99.batterymonitor.ui;
 
 import android.content.res.Resources;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
 import ru.didim99.batterymonitor.R;
 import ru.didim99.batterymonitor.utils.BatteryState;
 import ru.didim99.batterymonitor.utils.TimeUtils;
