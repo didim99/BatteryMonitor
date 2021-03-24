@@ -1,6 +1,7 @@
 <resources>
   <string name="app_name" translatable="false">Battery Monitor</string>
   <string name="btnOk" translatable="false">OK</string>
+  <string name="no_data" translatable="false">N/A</string>
   <!-- Battery level -->
   <string name="percentSign" translatable="false">%</string>
   <string name="percentStr" translatable="false">%d%%</string>
@@ -17,4 +18,7 @@
   <string name="stat_chargeTime">Since charge start</string>
   <string name="stat_lifeTime">Since last charge</string>
   <string name="stat_uptime">Uptime</string>
+  <string name="section_duration">Duration</string>
+  <string name="stat_last_duration_charge">Last charge</string>
+  <string name="stat_last_duration_usage">Last usage</string>
 </resources>

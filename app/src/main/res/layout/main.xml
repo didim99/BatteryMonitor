@@ -64,6 +64,50 @@
         android:textColor="@color/textActive"
         android:textSize="@dimen/textSize_main"/>
     </TableRow>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="5dp"
+      android:layout_marginBottom="5dp"
+      android:text="@string/section_duration"
+      android:textSize="@dimen/textSize_main"
+      android:gravity="center"
+      android:textColor="@color/colorAccent" />
+
+    <TableRow>
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stat_last_duration_charge"
+        android:textSize="@dimen/textSize_main"
+        android:gravity="end"/>
+
+      <TextView
+        android:id="@+id/tvLastDCharge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/textActive"
+        android:textSize="@dimen/textSize_main"/>
+    </TableRow>
+
+    <TableRow>
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stat_last_duration_usage"
+        android:textSize="@dimen/textSize_main"
+        android:gravity="end"/>
+
+      <TextView
+        android:id="@+id/tvLastDUsage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/textActive"
+        android:textSize="@dimen/textSize_main"/>
+    </TableRow>
   </TableLayout>
 
   <Button

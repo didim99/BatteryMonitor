@@ -11,4 +11,7 @@
   <string name="stat_chargeTime">С начала зарядки</string>
   <string name="stat_lifeTime">С последней зарядки</string>
   <string name="stat_uptime">С момента загрузки</string>
+  <string name="section_duration">Длительность</string>
+  <string name="stat_last_duration_charge">Посл. зарядки</string>
+  <string name="stat_last_duration_usage">Посл. использования</string>
 </resources>
