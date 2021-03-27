@@ -29,4 +29,8 @@ public class TimeUtils {
     return res.getString(
       R.string.time_detailed_days, time, hours, minutes, seconds);
   }
+
+  public static long millisToSeconds(long millis) {
+    return millis < 0 ? millis : millis / 1000;
+  }
 }

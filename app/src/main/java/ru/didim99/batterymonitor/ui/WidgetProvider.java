@@ -9,7 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 import ru.didim99.batterymonitor.R;
-import ru.didim99.batterymonitor.utils.BatteryState;
+import ru.didim99.batterymonitor.core.BatteryStat;
+import ru.didim99.batterymonitor.core.BatteryState;
 
 /**
  * Created by didim99 on 06.07.19.
@@ -36,11 +37,12 @@ public class WidgetProvider extends AppWidgetProvider {
   public void onUpdate(Context context, AppWidgetManager manager, int[] appWidgetIds) {
     BatteryState state = BatteryState.load(context);
     if (state == null) return;
-    state.update(context);
+    BatteryStat stat = new BatteryStat(context, state);
+    stat.update(context);
 
     WidgetDrawer drawer = new WidgetDrawer(context);
     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-    views.setImageViewBitmap(R.id.ivBackground, drawer.draw(state));
+    views.setImageViewBitmap(R.id.ivBackground, drawer.draw(stat));
     manager.updateAppWidget(appWidgetIds, views);
     setupSelfUpdate(context, appWidgetIds);
   }

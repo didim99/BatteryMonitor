@@ -8,7 +8,8 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import ru.didim99.batterymonitor.R;
-import ru.didim99.batterymonitor.utils.BatteryState;
+import ru.didim99.batterymonitor.core.BatteryStat;
+import ru.didim99.batterymonitor.core.BatteryState;
 import ru.didim99.batterymonitor.utils.ColorScale;
 import ru.didim99.batterymonitor.utils.TimeUtils;
 
@@ -33,8 +34,8 @@ class WidgetDrawer {
   private static final int BATT_PIN_WIDTH = CANVAS_WIDTH / 2;
   private static final int BATT_PIN_HEIGHT = CANVAS_HEIGHT * BATT_PIN_PART / 100;
 
-  private Context context;
-  private Resources res;
+  private final Context context;
+  private final Resources res;
   private Canvas canvas;
   private Paint paint;
 
@@ -46,15 +47,15 @@ class WidgetDrawer {
     this.context = context;
   }
 
-  public Bitmap draw(BatteryState state) {
+  public Bitmap draw(BatteryStat stat) {
     Bitmap bitmap = Bitmap.createBitmap(CANVAS_WIDTH,
       CANVAS_HEIGHT, Bitmap.Config.ARGB_8888);
     canvas = new Canvas(bitmap);
     paint = getPaint(context);
 
-    getTextColors(state);
-    drawBackground(state.getPercent());
-    drawText(state);
+    getTextColors(stat.getCurrentState());
+    drawBackground(stat.getCurrentState().getPercent());
+    drawText(stat);
     return bitmap;
   }
 
@@ -93,10 +94,10 @@ class WidgetDrawer {
       BATT_CORNER_RADIUS, BATT_CORNER_RADIUS, paint);
   }
 
-  private void drawText(BatteryState state) {
+  private void drawText(BatteryStat stat) {
     String percentSign = res.getString(R.string.percentSign);
-    String percentStr = String.valueOf(state.getPercent());
-    String timeStr = TimeUtils.getTimeString(res, state.getLifeTime());
+    String percentStr = String.valueOf(stat.getCurrentState().getPercent());
+    String timeStr = TimeUtils.getTimeString(res, stat.getLifeTime());
 
     // Percent string
     int numWidth = FONT_SIZE_MAIN / 2 * percentStr.length();

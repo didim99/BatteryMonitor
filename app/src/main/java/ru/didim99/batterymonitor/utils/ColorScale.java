@@ -12,7 +12,7 @@ public class ColorScale {
   private static final double MIN_VALUE = 0.0;
   private static final double MAX_VALUE = 1.0;
 
-  private ArrayList<Point> table;
+  private final ArrayList<Point> table;
 
   public ColorScale(Point... points) {
     if (points == null)
@@ -47,8 +47,8 @@ public class ColorScale {
   }
 
   public static class Point implements Comparable<Point> {
-    private double value;
-    private int color;
+    private final double value;
+    private final int color;
 
     public Point(double value, int color) {
       this.value = bound(value, MIN_VALUE, MAX_VALUE);
