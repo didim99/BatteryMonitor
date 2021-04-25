@@ -14,6 +14,7 @@
   <string name="time_detailed_hours" translatable="false">%02d:%02d:%02d</string>
   <string name="time_detailed_days">%dd %02d:%02d:%02d</string>
   <!-- MainActivity -->
+  <string name="refresh_widget">Force refresh widget</string>
   <string name="stat_batteryLevel">Battery level</string>
   <string name="stat_chargeTime">Since charge start</string>
   <string name="stat_lifeTime">Since last charge</string>
@@ -21,4 +22,8 @@
   <string name="section_duration">Duration</string>
   <string name="stat_last_duration_charge">Last charge</string>
   <string name="stat_last_duration_usage">Last usage</string>
+  <!-- Debug messages -->
+  <string name="debug_previewTaken" translatable="false">Widget preview saved to: %s</string>
+  <string name="debug_unableToTakePreview" translatable="false">Unable to take preview: %s</string>
+  <string name="debug_externalCacheNotFound" translatable="false">external cache dir not found</string>
 </resources>

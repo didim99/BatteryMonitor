@@ -10,6 +10,7 @@ import ru.didim99.batterymonitor.utils.TimeUtils;
  */
 
 public class BatteryStat {
+  private static final String KEY_LAST_UPDATE = "global.lastUpdateTime";
   private static final String KEY_LAST_PERCENT = "battery.lastPercent";
   private static final String KEY_LAST_STATE = "battery.lastState";
   private static final String KEY_LAST_TIME = "battery.lastTime";
@@ -26,6 +27,7 @@ public class BatteryStat {
   private int lastPercent;
   private long lastTime, lastTimeFull;
   private long lastDCharge, lastDUsage;
+  private long lastUpdate;
 
   public BatteryStat(Context context, BatteryState state) {
     this.state = state;
@@ -34,6 +36,7 @@ public class BatteryStat {
 
   private void loadFromSettings(Context context) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    lastUpdate = settings.getLong(KEY_LAST_UPDATE, DEFAULT_TIME);
     lastPercent = settings.getInt(KEY_LAST_PERCENT, DEFAULT_PERCENT);
     prevState = settings.getBoolean(KEY_LAST_STATE, DEFAULT_LAST_STATE);
     lastTime = settings.getLong(KEY_LAST_TIME, DEFAULT_TIME);
@@ -43,42 +46,44 @@ public class BatteryStat {
   }
 
   public void update(Context context) {
-    if (isChargedNow()) updateTimeFull(context);
-    if (needUpdatePercent()) updatePercent(context);
+    SharedPreferences.Editor editor = PreferenceManager
+      .getDefaultSharedPreferences(context).edit();
+
+    if (isChargedNow()) updateTimeFull(editor);
+    if (needUpdatePercent()) updatePercent(editor);
     if (needUpdateTime()) {
-      updateDuration(context);
-      updateTime(context);
+      updateDuration(editor);
+      updateTime(editor);
     }
+
+    lastUpdate = System.currentTimeMillis();
+    editor.putLong(KEY_LAST_UPDATE, lastUpdate).apply();
   }
 
-  private void updateDuration(Context context) {
+  private void updateDuration(SharedPreferences.Editor editor) {
     long now = System.currentTimeMillis();
     if (state.isCharging())
       lastDUsage = now - lastTime;
     else
       lastDCharge = (state.isFull() ? lastTimeFull : now) - lastTime;
 
-    PreferenceManager.getDefaultSharedPreferences(context).edit()
-      .putLong(KEY_LAST_DURATION_CHARGE, lastDCharge)
-      .putLong(KEY_LAST_DURATION_USAGE, lastDUsage).apply();
+    editor.putLong(KEY_LAST_DURATION_CHARGE, lastDCharge)
+      .putLong(KEY_LAST_DURATION_USAGE, lastDUsage);
   }
 
-  private void updateTime(Context context) {
+  private void updateTime(SharedPreferences.Editor editor) {
     lastTime = System.currentTimeMillis();
-    PreferenceManager.getDefaultSharedPreferences(context).edit()
-      .putBoolean(KEY_LAST_STATE, state.isCharging())
-      .putLong(KEY_LAST_TIME, lastTime).apply();
+    editor.putBoolean(KEY_LAST_STATE, state.isCharging())
+      .putLong(KEY_LAST_TIME, lastTime);
   }
 
-  private void updateTimeFull(Context context) {
+  private void updateTimeFull(SharedPreferences.Editor editor) {
     lastTimeFull = System.currentTimeMillis();
-    PreferenceManager.getDefaultSharedPreferences(context).edit()
-      .putLong(KEY_LAST_TIME_FULL, lastTimeFull).apply();
+    editor.putLong(KEY_LAST_TIME_FULL, lastTimeFull);
   }
 
-  private void updatePercent(Context context) {
-    PreferenceManager.getDefaultSharedPreferences(context).edit()
-      .putInt(KEY_LAST_PERCENT, state.getPercent()).apply();
+  private void updatePercent(SharedPreferences.Editor editor) {
+    editor.putInt(KEY_LAST_PERCENT, state.getPercent());
   }
 
   private boolean isChargedNow() {

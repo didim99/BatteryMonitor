@@ -26,10 +26,7 @@ public class WidgetProvider extends AppWidgetProvider {
       || Intent.ACTION_POWER_DISCONNECTED.equals(action)
       || Intent.ACTION_BATTERY_LOW.equals(action)
       || Intent.ACTION_BATTERY_OKAY.equals(action)) {
-      AppWidgetManager manager = AppWidgetManager.getInstance(context);
-      int[] ids = manager.getAppWidgetIds(
-        new ComponentName(context, WidgetProvider.class));
-      context.sendBroadcast(getUpdateIntent(ids));
+      requireUpdate(context);
     }
   }
 
@@ -47,17 +44,24 @@ public class WidgetProvider extends AppWidgetProvider {
     setupSelfUpdate(context, appWidgetIds);
   }
 
-  private Intent getUpdateIntent(int[] ids) {
-    Intent intent = new Intent();
-    intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-    return intent;
+  public static void requireUpdate(Context context) {
+    AppWidgetManager manager = AppWidgetManager.getInstance(context);
+    int[] ids = manager.getAppWidgetIds(
+      new ComponentName(context, WidgetProvider.class));
+    context.sendBroadcast(getUpdateIntent(ids));
   }
 
-  private void setupSelfUpdate(Context context, int[] ids) {
+  private static void setupSelfUpdate(Context context, int[] ids) {
     Intent updateIntent = getUpdateIntent(ids);
     AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     am.set(AlarmManager.RTC, System.currentTimeMillis() + UPDATE_PERIOD,
       PendingIntent.getBroadcast(context, 0, updateIntent, 0));
+  }
+
+  private static Intent getUpdateIntent(int[] ids) {
+    Intent intent = new Intent();
+    intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+    return intent;
   }
 }

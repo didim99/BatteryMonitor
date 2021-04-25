@@ -7,6 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import ru.didim99.batterymonitor.R;
 import ru.didim99.batterymonitor.core.BatteryStat;
 import ru.didim99.batterymonitor.core.BatteryState;
@@ -141,5 +144,12 @@ class WidgetDrawer {
     else if (state.isLow()) textColor = res.getColor(R.color.widgetTextLow);
     else textColor = res.getColor(R.color.widgetTextNormal);
     textShadowColor = res.getColor(R.color.widgetTextShadow);
+  }
+
+  public void drawToFile(BatteryStat stat, String path) throws IOException {
+    Bitmap image = draw(stat);
+    OutputStream dst = new FileOutputStream(path);
+    image.compress(Bitmap.CompressFormat.PNG, 100, dst);
+    dst.close();
   }
 }

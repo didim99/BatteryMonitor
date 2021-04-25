@@ -110,6 +110,17 @@
     </TableRow>
   </TableLayout>
 
+  <ImageButton
+    android:id="@+id/btnRefresh"
+    style="?android:buttonBarButtonStyle"
+    android:src="@drawable/ic_refresh_24"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/statView"
+    android:layout_alignParentStart="true"
+    android:rotationY="180"
+    android:contentDescription="@string/refresh_widget" />
+
   <Button
     android:id="@+id/btnOk"
     style="?android:buttonBarButtonStyle"
