@@ -55,7 +55,8 @@ public class WidgetProvider extends AppWidgetProvider {
     Intent updateIntent = getUpdateIntent(ids);
     AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     am.set(AlarmManager.RTC, System.currentTimeMillis() + UPDATE_PERIOD,
-      PendingIntent.getBroadcast(context, 0, updateIntent, 0));
+      PendingIntent.getBroadcast(context, 0,
+        updateIntent, PendingIntent.FLAG_CANCEL_CURRENT));
   }
 
   private static Intent getUpdateIntent(int[] ids) {
