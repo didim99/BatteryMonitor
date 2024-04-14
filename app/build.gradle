@@ -14,7 +14,7 @@ android {
     versionCode 10
     versionName '1.2.2'
     testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-    project.ext.set("archivesBaseName", "BatteryMonitor-" + versionName)
+    setProperty("archivesBaseName", "BatteryMonitor-" + versionName)
   }
   signingConfigs {
     defaultSign {
