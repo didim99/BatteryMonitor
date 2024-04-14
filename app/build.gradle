@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 28
+  compileSdkVersion 34
   compileOptions {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
@@ -9,10 +9,11 @@ android {
   defaultConfig {
     applicationId "ru.didim99.batterymonitor"
     minSdkVersion 17
-    targetSdkVersion 29
+    targetSdkVersion 34
     versionCode 10
     versionName '1.2.2'
     testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    project.ext.set("archivesBaseName", "BatteryMonitor-" + versionName)
   }
   signingConfigs {
     defaultSign {
@@ -41,8 +42,8 @@ android {
 
 dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
-  implementation 'androidx.appcompat:appcompat:1.2.0'
+  implementation 'androidx.appcompat:appcompat:1.6.1'
   testImplementation 'junit:junit:4.13.2'
-  androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-  androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+  androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+  androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
