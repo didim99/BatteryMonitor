@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 34
+  namespace 'ru.didim99.batterymonitor'
   compileOptions {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
   }
   defaultConfig {
+    compileSdk 34
     applicationId "ru.didim99.batterymonitor"
     minSdkVersion 17
     targetSdkVersion 34
@@ -37,6 +38,9 @@ android {
   lintOptions {
     checkReleaseBuilds false
     abortOnError true
+  }
+  buildFeatures {
+    buildConfig true
   }
 }
 
