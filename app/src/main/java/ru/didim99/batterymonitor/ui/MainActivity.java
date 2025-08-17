@@ -13,6 +13,7 @@ import ru.didim99.batterymonitor.BuildConfig;
 import ru.didim99.batterymonitor.R;
 import ru.didim99.batterymonitor.core.BatteryStat;
 import ru.didim99.batterymonitor.core.BatteryState;
+import ru.didim99.batterymonitor.core.LevelStat;
 import ru.didim99.batterymonitor.utils.TimeUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
       res, stat.getLifeTime()));
     tvUptime.setText(describeTime(res, TimeUtils
       .millisToSeconds(SystemClock.elapsedRealtime())));
-    tvLastDCharge.setText(describeTime(res, stat.getLastDCharge()));
-    tvLastDUsage.setText(describeTime(res, stat.getLastDUsage()));
+    tvLastDCharge.setText(describeStat(res, stat.getLastChgStat()));
+    tvLastDUsage.setText(describeStat(res, stat.getLastUsgStat()));
 
     if (BuildConfig.DEBUG) {
       findViewById(R.id.btnRefresh).setOnLongClickListener(
@@ -59,6 +60,18 @@ public class MainActivity extends AppCompatActivity {
   private String describeTime(Resources res, long time) {
     if (time < 0) return getString(R.string.no_data);
     else return TimeUtils.getDetailedTimeString(res, time);
+  }
+
+  private String describePercent(int percent) {
+    if (percent < 0) return getString(R.string.no_data);
+    else return getString(R.string.percentStr, percent);
+  }
+
+  private String describeStat(Resources res, LevelStat stat) {
+    String time = describeTime(res, stat.getDurationSeconds());
+    String startPct = describePercent(stat.getStart());
+    String endPct = describePercent(stat.getEnd());
+    return getString(R.string.time_percents, time, startPct, endPct);
   }
 
   private boolean takeWidgetPreview(BatteryStat stat) {

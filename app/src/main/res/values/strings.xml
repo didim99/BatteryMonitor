@@ -13,6 +13,7 @@
   <string name="time_detailed_minutes" translatable="false">%02d:%02d</string>
   <string name="time_detailed_hours" translatable="false">%02d:%02d:%02d</string>
   <string name="time_detailed_days">%dd %02d:%02d:%02d</string>
+  <string name="time_percents" translatable="false">%s (%s -> %s)</string>
   <!-- MainActivity -->
   <string name="refresh_widget">Force refresh widget</string>
   <string name="stat_batteryLevel">Battery level</string>
